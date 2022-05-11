@@ -12,6 +12,8 @@
     state: directory
   become: true
   when: ansible_machine == 'arm64'
+  tags:
+    - sudo
 
 - name: Ensure Homebrew parent directory has correct permissions (Intel).
   block:
@@ -33,6 +35,8 @@
       become: true
       when: "ansible_distribution_version is version('10.13', '<')"
   when: ansible_machine == 'x86_64'
+  tags:
+    - sudo
 
 - name: Ensure Homebrew directory exists.
   file:
@@ -42,6 +46,8 @@
     state: directory
     mode: 0775
   become: true
+  tags:
+    - sudo
 
 # Clone Homebrew.
 - name: Ensure Homebrew is installed.
@@ -63,6 +69,8 @@
     group: "{{ homebrew_group }}"
     mode: 0775
   become: true
+  tags:
+    - sudo
 
 - name: Ensure proper ownership on homebrew_install_path subdirs.
   file:
@@ -72,6 +80,8 @@
     group: "{{ homebrew_group }}"
     recurse: true
   become: true
+  tags:
+    - sudo
 
 # Place brew binary in proper location and complete setup.
 - name: Check if homebrew binary is already in place.
@@ -86,6 +96,8 @@
     state: link
   when: not homebrew_binary.stat.exists
   become: true
+  tags:
+    - sudo
 
 - name: Ensure proper homebrew folders are in place.
   file:
@@ -95,6 +107,8 @@
     group: "{{ homebrew_group }}"
   become: true
   loop: "{{ homebrew_folders_base + homebrew_folders_additional }}"
+  tags:
+    - sudo
 
 - block:
     - name: Force update brew after installation.
